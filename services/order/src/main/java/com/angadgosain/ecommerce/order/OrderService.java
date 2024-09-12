@@ -6,6 +6,8 @@ import com.angadgosain.ecommerce.kafka.OrderConfirmation;
 import com.angadgosain.ecommerce.kafka.OrderProducer;
 import com.angadgosain.ecommerce.orderline.OrderLineRequest;
 import com.angadgosain.ecommerce.orderline.OrderLineService;
+import com.angadgosain.ecommerce.payment.PaymentClient;
+import com.angadgosain.ecommerce.payment.PaymentRequest;
 import com.angadgosain.ecommerce.product.ProductClient;
 import com.angadgosain.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +27,7 @@ public class OrderService {
     private final OrderMapper mapper;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
+    private final PaymentClient paymentClient;
     public Integer createOrder(OrderRequest request) {
         var customer = this.customerClient.findCustomerById(request.customerId())
                 .orElseThrow(() -> new BusinessException("Cannot create order:: No customer exists with the provided ID"));
@@ -43,7 +46,14 @@ public class OrderService {
                     )
             );
         }
-        // TODO: start payment process
+        var paymentRequest = new PaymentRequest(
+                request.amount(),
+                request.paymentMethod(),
+                order.getId(),
+                order.getReference(),
+                customer
+        );
+        paymentClient.requestOrderPayment(paymentRequest);
 
 
         orderProducer.sendOrderConfirmation(
