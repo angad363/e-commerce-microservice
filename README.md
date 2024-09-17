@@ -5,6 +5,9 @@
 
 This project is a backend implementation of an E-commerce application, transitioning from a monolithic architecture to a microservices architecture. The system is composed of several independent services for handling customers, products, orders, payments, and notifications, each managed as its own microservice.
 
+![diagram-export-9-13-2024-1_44_41-PM (1)](https://github.com/user-attachments/assets/07de24db-0f64-4f09-bdf4-924f103ab76b)
+
+
 ## Tech Stack
 
 - **Java 21**: Base programming language for all services
